@@ -1,22 +1,19 @@
-import fs from 'fs'
-import moment from 'moment'
 // import WebSocket from 'websocket'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const WebSocket = require('websocket').client
+const WebSocket = require('websocket').w3cwebsocket
 
-const ws = new WebSocket()
+const ws = new WebSocket('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self')
 
 interface Message {
   type: string
   utf8Data: string
 }
 
-console.log('from package')
-
 // Error handler to catch any error connecting to websocket address
-ws.on('connectFailed', (error: string) => {
-  console.log('Connection Error: ' + error)
-})
+
+ws.onopen = function () {
+  console.log('websocket opened')
+}
 
 // on event to make sure the websocket is open before executing functions
 // error handling, close message, open message, onmessage functions
@@ -33,24 +30,15 @@ ws.on('connect', (connection: any) => {
 
   connection.on('message', (message: Message) => {
     // logs into log.txt as a message that was received.
-    fs.appendFile('log.txt', `\n${getTime()} RECV: ${message.utf8Data}`, (err) => {
-      if (err !== null) {
-        console.log(err)
-      } else {
-        console.log(`${getTime()} RECV: ${message.utf8Data}`)
-      }
-    })
   })
 })
 
-ws.connect('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self')
-
 // call back function to print out current time whenever receive and send are called
-const getTime = (): string => {
-  const dateNow: string = moment().format('L')
-  const timeNow: string = moment().format('LTS')
-  return dateNow + ' ' + timeNow
-}
+// const getTime = (): string => {
+//   const dateNow: string = moment().format('L')
+//   const timeNow: string = moment().format('LTS')
+//   return dateNow + ' ' + timeNow
+// }
 
 // send function that will send message defined by the user
 export const send = (message: string): void => {
@@ -58,15 +46,6 @@ export const send = (message: string): void => {
     if (connection.connected !== undefined) {
       connection.sendUTF(message)
     } else console.log('Not connected to WebSocket Server')
-  })
-
-  // file write using fs library
-  fs.appendFile('log.txt', `\n${getTime()} SEND: ${message}`, (err) => {
-    if (err !== null) {
-      console.log(err)
-    } else {
-      console.log(`${getTime()} SEND: ${message}`)
-    }
   })
 }
 // disconnect function
