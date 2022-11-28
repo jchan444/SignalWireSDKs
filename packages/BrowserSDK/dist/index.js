@@ -1,16 +1,20 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 // import WebSocket from 'websocket'
-const moment_1 = __importDefault(require("moment"));
+const moment = require('moment');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Ws = require('websocket').w3cwebsocket;
 const ws = new Ws('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
 const messages = [];
-let list;
-// Error handler to catch any error connecting to websocket address
+// websocket methods to let user know of major events
 ws.onopen = () => {
     console.log('W3c Websocket connection established!');
 };
@@ -20,17 +24,18 @@ ws.onerror = (event) => {
 ws.onclose = () => {
     console.log('Websocket closed!');
 };
+// will create and object, update the 'database'
 ws.onmessage = (message) => {
     createMessageObj(message.data);
-    displayMessages(messages);
     console.log(message.data);
 };
 // call back function to print out current time whenever receive and send are called
 const getTime = () => {
-    const dateNow = (0, moment_1.default)().format('L');
-    const timeNow = (0, moment_1.default)().format('LTS');
+    const dateNow = moment().format('L');
+    const timeNow = moment().format('LTS');
     return dateNow + ' ' + timeNow;
 };
+// callback function to contruct the object for database storage
 const createMessageObj = (message) => {
     const dateNow = getTime();
     const idx = Date.now();
@@ -42,18 +47,20 @@ const createMessageObj = (message) => {
     messages.push(entryMessage);
 };
 // send function that will send message defined by the user
-const send = (message) => {
+const send = (message) => __awaiter(void 0, void 0, void 0, function* () {
     createMessageObj(message);
-    ws.send(message);
+    yield ws.send(message);
     displayMessages(messages);
-};
+});
 // disconnect function
 const disconnect = () => {
     ws.close();
 };
+// function that contructs list item strings.
 const displayMessages = (messages) => {
-    list = messages.map((entry) => {
+    const list = messages.map((entry) => {
         return `<li date='${entry.sentAt}'>${entry.sentAt}: ${entry.content}</li>`;
     });
+    return list;
 };
-module.exports = { send, disconnect, messages };
+module.exports = { send, disconnect, messages, displayMessages };

@@ -1,5 +1,5 @@
 // import WebSocket from 'websocket'
-import moment from 'moment'
+const moment = require('moment')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Ws = require('websocket').w3cwebsocket
 
@@ -12,10 +12,8 @@ interface Entry {
 }
 
 const messages: Entry[] = []
-let list: string[]
 
-// Error handler to catch any error connecting to websocket address
-
+// websocket methods to let user know of major events
 ws.onopen = () => {
   console.log('W3c Websocket connection established!')
 }
@@ -27,10 +25,9 @@ ws.onerror = (event: Error) => {
 ws.onclose = () => {
   console.log('Websocket closed!')
 }
-
+// will create and object, update the 'database'
 ws.onmessage = (message: { data: string }) => {
   createMessageObj(message.data)
-  displayMessages(messages)
   console.log(message.data)
 }
 
@@ -41,6 +38,7 @@ const getTime = (): string => {
   return dateNow + ' ' + timeNow
 }
 
+// callback function to contruct the object for database storage
 const createMessageObj = (message: string): void => {
   const dateNow: string = getTime()
   const idx: number = Date.now()
@@ -55,9 +53,9 @@ const createMessageObj = (message: string): void => {
 }
 
 // send function that will send message defined by the user
-const send = (message: string): void => {
+const send = async (message: string): Promise<void> => {
   createMessageObj(message)
-  ws.send(message)
+  await ws.send(message)
   displayMessages(messages)
 }
 // disconnect function
@@ -65,10 +63,13 @@ const disconnect = (): void => {
   ws.close()
 }
 
-const displayMessages = (messages: Entry[]): void => {
-  list = messages.map((entry: Entry) => {
+// function that contructs list item strings.
+const displayMessages = (messages: Entry[]): string[] => {
+  const list = messages.map((entry: Entry) => {
     return `<li date='${entry.sentAt}'>${entry.sentAt}: ${entry.content}</li>`
   })
+
+  return list
 }
 
-module.exports = { send, disconnect, messages }
+module.exports = { send, disconnect, messages, displayMessages }

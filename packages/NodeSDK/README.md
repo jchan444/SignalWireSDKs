@@ -1,5 +1,5 @@
 # SignalWire Node.js SDK
-This WebSocket SDK for Node.js enables Node.jsd developers to connect to a Websocket Server (https://www.piesocket.com/websocket-tester) send messages, and receive them which will log each message in a log.txt in the root project folder.
+This WebSocket SDK for Node.js enables Node.js developers to connect to a Websocket Server (https://www.piesocket.com/websocket-tester) send messages, and receive them which will log each message in a log.txt in the root project folder.
 
 ## Getting Started
 Run 'npm i signalwire-node-sdk' to get the latest version of the package.
