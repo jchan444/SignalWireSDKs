@@ -1,60 +1,74 @@
 // import WebSocket from 'websocket'
+import moment from 'moment'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const WebSocket = require('websocket').w3cwebsocket
+const Ws = require('websocket').w3cwebsocket
 
-const ws = new WebSocket('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self')
+const ws = new Ws('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self')
 
-interface Message {
-  type: string
-  utf8Data: string
+interface Entry {
+  content: string
+  id: Number
+  sentAt: string
 }
+
+const messages: Entry[] = []
+let list: string[]
 
 // Error handler to catch any error connecting to websocket address
 
-ws.onopen = function () {
-  console.log('websocket opened')
+ws.onopen = () => {
+  console.log('W3c Websocket connection established!')
 }
 
-// on event to make sure the websocket is open before executing functions
-// error handling, close message, open message, onmessage functions
-ws.on('connect', (connection: any) => {
-  console.log('WebSocket client connection established!')
+ws.onerror = (event: Error) => {
+  console.log(event)
+}
 
-  connection.on('error', (error: string) => {
-    console.log('Connection error: ' + error)
-  })
+ws.onclose = () => {
+  console.log('Websocket closed!')
+}
 
-  connection.on('close', () => {
-    console.log('Connection closed!')
-  })
-
-  connection.on('message', (message: Message) => {
-    // logs into log.txt as a message that was received.
-  })
-})
+ws.onmessage = (message: { data: string }) => {
+  createMessageObj(message.data)
+  displayMessages(messages)
+  console.log(message.data)
+}
 
 // call back function to print out current time whenever receive and send are called
-// const getTime = (): string => {
-//   const dateNow: string = moment().format('L')
-//   const timeNow: string = moment().format('LTS')
-//   return dateNow + ' ' + timeNow
-// }
+const getTime = (): string => {
+  const dateNow: string = moment().format('L')
+  const timeNow: string = moment().format('LTS')
+  return dateNow + ' ' + timeNow
+}
+
+const createMessageObj = (message: string): void => {
+  const dateNow: string = getTime()
+  const idx: number = Date.now()
+
+  const entryMessage: Entry = {
+    content: message,
+    id: idx,
+    sentAt: dateNow
+  }
+
+  messages.push(entryMessage)
+}
 
 // send function that will send message defined by the user
-export const send = (message: string): void => {
-  ws.on('connect', (connection: any) => {
-    if (connection.connected !== undefined) {
-      connection.sendUTF(message)
-    } else console.log('Not connected to WebSocket Server')
-  })
+const send = (message: string): void => {
+  createMessageObj(message)
+  ws.send(message)
+  displayMessages(messages)
 }
 // disconnect function
-export const disconnect = (): void => {
-  ws.on('connect', (connection: any) => {
-    if (connection.connected !== undefined) {
-      connection.close()
-    }
+const disconnect = (): void => {
+  ws.close()
+}
+
+const displayMessages = (messages: Entry[]): void => {
+  list = messages.map((entry: Entry) => {
+    return `<li date='${entry.sentAt}'>${entry.sentAt}: ${entry.content}</li>`
   })
 }
 
-export default { send, disconnect }
+module.exports = { send, disconnect, messages }

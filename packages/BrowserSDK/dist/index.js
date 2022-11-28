@@ -1,52 +1,59 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.disconnect = exports.send = void 0;
-// import WebSocket from 'websocket'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const WebSocket = require('websocket').w3cwebsocket;
-const ws = new WebSocket('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
-// Error handler to catch any error connecting to websocket address
-ws.onopen = function () {
-    console.log('websocket opened');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-// on event to make sure the websocket is open before executing functions
-// error handling, close message, open message, onmessage functions
-ws.on('connect', (connection) => {
-    console.log('WebSocket client connection established!');
-    connection.on('error', (error) => {
-        console.log('Connection error: ' + error);
-    });
-    connection.on('close', () => {
-        console.log('Connection closed!');
-    });
-    connection.on('message', (message) => {
-        // logs into log.txt as a message that was received.
-    });
-});
+Object.defineProperty(exports, "__esModule", { value: true });
+// import WebSocket from 'websocket'
+const moment_1 = __importDefault(require("moment"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Ws = require('websocket').w3cwebsocket;
+const ws = new Ws('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
+const messages = [];
+let list;
+// Error handler to catch any error connecting to websocket address
+ws.onopen = () => {
+    console.log('W3c Websocket connection established!');
+};
+ws.onerror = (event) => {
+    console.log(event);
+};
+ws.onclose = () => {
+    console.log('Websocket closed!');
+};
+ws.onmessage = (message) => {
+    createMessageObj(message.data);
+    displayMessages(messages);
+    console.log(message.data);
+};
 // call back function to print out current time whenever receive and send are called
-// const getTime = (): string => {
-//   const dateNow: string = moment().format('L')
-//   const timeNow: string = moment().format('LTS')
-//   return dateNow + ' ' + timeNow
-// }
+const getTime = () => {
+    const dateNow = (0, moment_1.default)().format('L');
+    const timeNow = (0, moment_1.default)().format('LTS');
+    return dateNow + ' ' + timeNow;
+};
+const createMessageObj = (message) => {
+    const dateNow = getTime();
+    const idx = Date.now();
+    const entryMessage = {
+        content: message,
+        id: idx,
+        sentAt: dateNow
+    };
+    messages.push(entryMessage);
+};
 // send function that will send message defined by the user
 const send = (message) => {
-    ws.on('connect', (connection) => {
-        if (connection.connected !== undefined) {
-            connection.sendUTF(message);
-        }
-        else
-            console.log('Not connected to WebSocket Server');
-    });
+    createMessageObj(message);
+    ws.send(message);
+    displayMessages(messages);
 };
-exports.send = send;
 // disconnect function
 const disconnect = () => {
-    ws.on('connect', (connection) => {
-        if (connection.connected !== undefined) {
-            connection.close();
-        }
+    ws.close();
+};
+const displayMessages = (messages) => {
+    list = messages.map((entry) => {
+        return `<li date='${entry.sentAt}'>${entry.sentAt}: ${entry.content}</li>`;
     });
 };
-exports.disconnect = disconnect;
-exports.default = { send: exports.send, disconnect: exports.disconnect };
+module.exports = { send, disconnect, messages };

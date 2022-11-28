@@ -11,8 +11,6 @@ interface Message {
   utf8Data: string
 }
 
-console.log('hello')
-
 // Error handler to catch any error connecting to websocket address
 ws.on('connectFailed', (error: string) => {
   console.log('Connection Error: ' + error)

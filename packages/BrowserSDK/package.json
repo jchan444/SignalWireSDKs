@@ -1,6 +1,6 @@
 {
   "name": "signalwire-browser-sdk",
-  "version": "1.0.10",
+  "version": "1.0.14",
   "description": "Signal Wire Browser SDK",
   "main": "index.js",
   "types": "index.d.ts",
