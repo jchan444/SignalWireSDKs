@@ -18,15 +18,15 @@ ws.onopen = () => {
   console.log('W3c Websocket connection established!')
 }
 
-ws.onerror = (event: Error) => {
+ws.onerror = (event: string) => {
   console.log(event)
 }
 
-ws.onclose = () => {
+ws.onclose = (): void => {
   console.log('Websocket closed!')
 }
 // will create and object, update the 'database'
-ws.onmessage = (message: { data: string }) => {
+ws.onmessage = (message: { data: string }): void => {
   createMessageObj(message.data)
   console.log(message.data)
 }
@@ -72,4 +72,4 @@ const displayMessages = (messages: Entry[]): string[] => {
   return list
 }
 
-module.exports = { send, disconnect, messages, displayMessages }
+module.exports = { send, disconnect, messages, displayMessages, createMessageObj }

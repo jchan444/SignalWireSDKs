@@ -1,11 +1,13 @@
 # SignalWire Node.js SDK
-This WebSocket SDK for browser enables Node.js developers to connect to a Websocket Server (https://www.piesocket.com/websocket-tester) send messages, and receive them which will then allow the developer to display them on directly on the browser
+This WebSocket SDK for browser enables developers to connect to a Websocket Server (https://www.piesocket.com/websocket-tester) send messages, and receive them which will then allow the developer to display them directly on the browser
 
 ## Getting Started
-Run 'npm i signalwire-node-sdk' to get the latest version of the package.
+The bundle is already bundled by browserify and is named "SWbundle.js".
+<script src='./SWbundle.js'></script>
+You must move the SWbundle to root folder if using this path.
 
 ## Developers
-There are currently two methods that you can use - 
+There are currently three methods that you can use - 
 
 send(message: string)
     Sends the string message to the WebSocket server and records the entry within a messages array

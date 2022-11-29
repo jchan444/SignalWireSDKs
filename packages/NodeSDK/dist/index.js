@@ -10,7 +10,7 @@ const moment_1 = __importDefault(require("moment"));
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const WebSocket = require('websocket').client;
 const ws = new WebSocket();
-// onerror to catch any error handling connecting to websocket address
+// Error handler to catch any error connecting to websocket address
 ws.on('connectFailed', (error) => {
     console.log('Connection Error: ' + error);
 });
@@ -36,7 +36,7 @@ ws.on('connect', (connection) => {
         });
     });
 });
-ws.connect('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self');
+// call back function to print out current time whenever receive and send are called
 const getTime = () => {
     const dateNow = (0, moment_1.default)().format('L');
     const timeNow = (0, moment_1.default)().format('LTS');
@@ -51,7 +51,7 @@ const send = (message) => {
         else
             console.log('Not connected to WebSocket Server');
     });
-    // code to file write using fs library
+    // file write using fs library
     fs_1.default.appendFile('log.txt', `\n${getTime()} SEND: ${message}`, (err) => {
         if (err !== null) {
             console.log(err);
@@ -62,6 +62,7 @@ const send = (message) => {
     });
 };
 exports.send = send;
+// disconnect function
 const disconnect = () => {
     ws.on('connect', (connection) => {
         if (connection.connected !== undefined) {

@@ -1,14 +1,15 @@
 {
   "name": "signalwire-node-sdk",
-  "version": "1.0.53",
+  "version": "1.1.0",
   "description": "Signal Wire Node SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "test": "jest",
     "prepare": "npm run build",
     "build": "tsc",
     "eslint": "eslint index.ts",
-    "eslintfix": "eslint index.ts --fix"
+    "eslintfix": "eslint index.ts ./test/index.test.js --fix"
   },
   "keywords": [],
   "author": "Johnny C.",

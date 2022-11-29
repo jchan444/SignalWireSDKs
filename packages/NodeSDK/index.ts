@@ -12,24 +12,24 @@ interface Message {
 }
 
 // Error handler to catch any error connecting to websocket address
-ws.on('connectFailed', (error: string) => {
+ws.on('connectFailed', (error: string): void => {
   console.log('Connection Error: ' + error)
 })
 
 // on event to make sure the websocket is open before executing functions
 // error handling, close message, open message, onmessage functions
-ws.on('connect', (connection: any) => {
+ws.on('connect', (connection: any): void => {
   console.log('WebSocket client connection established!')
 
-  connection.on('error', (error: string) => {
+  connection.on('error', (error: string): void => {
     console.log('Connection error: ' + error)
   })
 
-  connection.on('close', () => {
+  connection.on('close', (): void => {
     console.log('Connection closed!')
   })
 
-  connection.on('message', (message: Message) => {
+  connection.on('message', (message: Message): void => {
     // logs into log.txt as a message that was received.
     fs.appendFile('log.txt', `\n${getTime()} RECV: ${message.utf8Data}`, (err) => {
       if (err !== null) {
@@ -41,8 +41,6 @@ ws.on('connect', (connection: any) => {
     )
   })
 })
-
-ws.connect('wss://demo.piesocket.com/v3/channel_123?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9VRiaV&notify_self')
 
 // call back function to print out current time whenever receive and send are called
 const getTime = (): string => {
@@ -60,7 +58,7 @@ export const send = (message: string): void => {
   })
 
   // file write using fs library
-  fs.appendFile('log.txt', `\n${getTime()} SEND: ${message}`, (err) => {
+  fs.appendFile('log.txt', `\n${getTime()} SEND: ${message}`, (err): void => {
     if (err !== null) {
       console.log(err)
     } else {

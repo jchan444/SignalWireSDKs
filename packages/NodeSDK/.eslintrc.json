@@ -1,0 +1,21 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": "standard-with-typescript",
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "project": "./tsconfig.json",
+        "tsconfigRootDir": "/home/jchan/hiresmith/SignalWireSDKs/packages/NodeSDK"
+    },
+    "rules": {
+        "no-console": 0,
+        "no-empty": 0,
+        "no-irregular-whitespace":0,
+        "@typescript-eslint/no-var-requires": "warn"
+    }
+}

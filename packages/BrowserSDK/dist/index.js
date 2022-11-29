@@ -63,4 +63,4 @@ const displayMessages = (messages) => {
     });
     return list;
 };
-module.exports = { send, disconnect, messages, displayMessages };
+module.exports = { send, disconnect, messages, displayMessages, createMessageObj };
